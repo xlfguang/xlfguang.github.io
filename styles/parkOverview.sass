@@ -1,0 +1,142 @@
+.enterpriseFootprint
+    width: 60%
+    margin: 0 auto
+.parkFootprint
+    width: 60%
+    margin: 0 auto
+    .TotalCountTitle
+        font-style: normal
+        font-weight: 400
+        font-size: 14px
+        line-height: 18px
+    .TotalCountNum
+        font-weight: 600
+        font-size: 60px
+        line-height: 100%
+    .parkcard-box
+        margin-right: 16px
+        flex: 6
+    .TotalCount-box
+        flex: 4
+.ant-menu-item
+    line-height: 76px
+.ant-menu-item-selected
+
+    .ant-menu-title-content
+        color: #000
+        font-weight: 600
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-selected::after
+    border-bottom: 2px solid #10B482 !important
+
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item:hover,
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu:hover,
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-active,
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-active,
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-open,
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-open,
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-selected,
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-selected
+    color: #000 !important
+    font-weight: 600 !important
+.LineChart
+    background-color: #fff
+    border-radius: 16px
+    margin-top: 32px
+    padding: 20px 20px 0 20px
+
+.topCardBox
+    margin-top: 32px
+    display: flex
+    justify-content: space-between
+.TotalCountTitle
+    font-style: normal
+    font-weight: 400
+    font-size: 14px
+    line-height: 18px
+.TotalCountNum
+    font-weight: 600
+    font-size: 60px
+    line-height: 100%
+.parkcard-box
+    margin-right: 16px
+    flex: 6
+.TotalCount-box
+    flex: 4
+.infoTable-box
+    margin-top: 16px
+
+.parkOverview
+    width: 100%
+    min-height: 100vh
+    background: radial-gradient(#168ec2,#046088,#014b6b,#02374e)
+    display: flex
+    .index-left
+        width: 30%
+    .top-left-box
+        width: 320px
+        height: 320px
+        z-index: 1
+        position: relative
+        .top-left-img
+            width: 320px
+            height: 339px
+            background: url('/images/bc.png')
+            position: absolute
+            z-index: 1
+            // animation: logo-animation 1s ease-in-out infinite
+
+        .text-box
+            position: absolute
+            width: 320px
+            height: 320px
+            display: flex
+            justify-content: center
+            align-items: center
+            z-index: 2
+            .title-box
+                display: flex
+                align-items: center
+                text
+                .line
+                    width: 8px
+                    height: 38px
+                    background: #F79608
+                    margin-right: 5px
+                .title
+                    font-weight: 700
+                    font-size: 36px
+                    line-height: 38px
+                    color: #fff
+    .map
+        width: 70%
+
+@media screen and (max-width: 1200px)
+    .parkFootprint
+        width: 80%
+    .enterpriseFootprint
+        width: 80%
+    .topCardBox
+        flex-direction: column
+        align-items: center
+    .parkcard-box
+        margin: 0 0 16px 0 !important
+        width: 100%
+    .TotalCount-box
+        width: 100%
+    .parkOverview
+        flex-direction: column
+        .index-left
+            width: 100%
+            margin-top: 32px
+        .map
+            width: 100%
+
+@keyframes logo-animation
+    0%
+        transform: rotate(0deg)
+
+    20%
+        transform: rotate(30deg)
+
+    40%
+        transform: rotate(0deg)

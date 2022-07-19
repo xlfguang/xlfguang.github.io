@@ -1,8 +1,22 @@
-import '../styles/globals.css'
-import type { AppProps } from 'next/app'
+import "@styles/initialization.css";
+import "@styles/public.sass";
+import "@styles/parkOverview.sass";
+import "antd/dist/antd.css";
+import type { AppProps } from "next/app";
+import Layout from "@components/Layout/Layout";
+import MyContextWrapper from "@components/MyContext/MyContext";
+import MapScrtpi from '@components/MapScript/MapScript';
+
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+  return (
+    <MyContextWrapper>
+      <MapScrtpi></MapScrtpi>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+    </MyContextWrapper>
+  );
 }
 
-export default MyApp
+export default MyApp;

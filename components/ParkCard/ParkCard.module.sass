@@ -1,0 +1,54 @@
+.ParkCard
+    height: 160px
+    left: 0px
+    top: 0px
+    border-radius: 16px
+    padding: 37px 50px 35px 24px
+    display: flex
+    background-color: #fff
+    .industry
+        width: 90px
+        height: 88px
+        margin-right: 24px
+    .parkInfoBox
+        display: flex
+        flex-direction: column
+        .parkName
+            font-style: normal
+            font-weight: 700
+            font-size: 24px
+            line-height: 100%
+        .parkLoc
+            margin-top: 8px
+            font-weight: 400
+            font-size: 14px
+            line-height: 18px
+        .parkInfoItem
+            display: flex
+            align-items: center
+            div
+                margin-right: 5px
+            .parkInfoTitle
+                font-weight: 400
+                font-size: 14px
+                line-height: 18px
+                margin-right: 4px
+            .parkInfoCentent
+                font-weight: 700
+                font-size: 16px
+                line-height: 100%
+
+@media screen and (max-width: 800px)
+    .industry
+        display: none
+    .phoneRow
+        display: flex
+        flex-direction: column
+    .ParkCard
+        padding: 20px
+
+        .parkInfoBox
+            width: 100%
+            justify-content: space-between
+        .parkInfoItem
+            justify-content: space-between
