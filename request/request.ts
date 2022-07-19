@@ -70,6 +70,8 @@ const request: ResponseFun<any> = (
         }
       })
       .catch((err: ErrorResponse) => {
+        console.log('111err',err);
+        
         if (config.hint) message.error(err.response.data.message);
         reject(err.response.data);
       });

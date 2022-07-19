@@ -2,12 +2,13 @@ import type { NextPage } from "next";
 import styles from "./Header.module.sass";
 import { Dropdown, MenuProps, Modal, Space } from "antd";
 import { Menu } from "antd";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { MyContext } from "@components/MyContext/MyContext";
 import { login_Status } from "types/types";
 import Link from "next/link";
 import { removeLoc } from "@public/index";
+import { GET_ALL_PARK_LIST_API } from "@request/apis";
 
 const items: MenuProps["items"] = [
   {
@@ -40,10 +41,10 @@ const Header: NextPage = (req, res) => {
   const loginOut = () => {
     dispatch({
       type: "UPDATE_LOGIN_STATUS",
-      payload: login_Status.notLogin
-    })
-    removeLoc('token')
-    router.push('/login')
+      payload: login_Status.notLogin,
+    });
+    removeLoc("token");
+    router.push("/login");
   };
   const menu = (
     <Menu
@@ -62,6 +63,16 @@ const Header: NextPage = (req, res) => {
       ]}
     />
   );
+  useEffect(() => {
+    if (loginStatus === login_Status.login) {
+      getAllParkList();
+    }
+  }, [loginStatus]);
+
+  const getAllParkList = async () => {
+    let res = await GET_ALL_PARK_LIST_API();
+    console.log(res);
+  };
 
   const onClick: MenuProps["onClick"] = (e) => {
     router.push(`/${e.key}`);

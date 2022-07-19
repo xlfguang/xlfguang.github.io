@@ -1,3 +1,4 @@
+import { Skeleton } from "antd";
 import style from "./ParkCard.module.sass";
 export interface ParkCardData {
   parkName: string;
@@ -5,6 +6,7 @@ export interface ParkCardData {
   parktype: string;
   parknum: number;
   area: number | string;
+  isLoging?: boolean;
 }
 const ParkCard = (ParkCardData: ParkCardData) => {
   const { parkName, parkLoc, parktype, parknum, area } = ParkCardData;

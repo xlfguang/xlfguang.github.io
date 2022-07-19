@@ -2,7 +2,8 @@ import LineChart from "@components/LineChart/LineChart";
 import MiniCard, { MiniCardProps } from "@components/MiniCard/MiniCard";
 import ParkCard from "@components/ParkCard/ParkCard";
 import TotalCount from "@components/TotalCount/TotalCount";
-import Mymap from '@components/Mymap/Mymap';
+import Mymap from "@components/Mymap/Mymap";
+import MySkeleton from "@components/MySkeleton";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import {
@@ -13,9 +14,11 @@ import {
 import { useEffect, useState } from "react";
 import { park_Info } from "types/types";
 
-
 const ParkFootprint: NextPage = () => {
   const router = useRouter();
+  const [parkInfoShow, setParkInfoShow] = useState(true);
+  const [parkEchartsShow, setParkEchartsShow] = useState(true);
+  const [activeParkInfoShow, setActiveParkInfoShow] = useState(true);
   const [parkInfo, setparkInfo] = useState<park_Info["data"]>({
     id: 0,
     name: "暂无信息",
@@ -27,7 +30,15 @@ const ParkFootprint: NextPage = () => {
     type: "暂无信息",
     reduce: "0.00",
   });
-  const [testMiniCardList, setTestMiniCardList] = useState<MiniCardProps[]>([]);
+  const [miniCardList, setTestMiniCardList] = useState<MiniCardProps[]>([
+    {
+      id: 0,
+      title: "暂无消息",
+      iconImg: "/images/Group.png",
+      time: "暂无信息",
+      emissions: "0.00",
+    },
+  ]);
   const [park_xAxisData, setPark_xAxisData] = useState<number[] | string[]>([]);
   const [park_carbonEquivalent, setpark_carbonEquivalent] = useState<
     string[] | number[]
@@ -36,109 +47,125 @@ const ParkFootprint: NextPage = () => {
     string[] | number[]
   >([]);
 
-  const toInfo = (id: string | number) => {
-    router.push(`/parkFootprint/info?id=${id}`);
+  const toParkFootprintInfo = (id: string | number) => {
+    router.push(`/parkFootprint/info`);
   };
 
-  const getID: () => string | boolean = () => {
-    let id = (router.query.id as string | undefined) || "";
-    if (id) {
-      return id;
-    }
-    return false;
-  };
   const getParkInfo = async () => {
-    let id = getID();
-    if (!id) {
-      id = "1";
-    }
-    const getAllInfo = (id: number, type: number = 0) => {
-      return Promise.all([
-        GET_PARK_CARBON_INFO_API(id),
-        GET_PARK_STATISTICS_API(id),
-        GET_PARK_TABLE_INFO_API(id, type),
-      ]);
-    };
-    const alliInfo = await getAllInfo(1, 1);
-    const [carbonInfo, statisticsInfo, tableInfo] = alliInfo;
-    // 处理数据
-    const statisticsInfoData = statisticsInfo.data.map((item) => {
-      return {
-        id: item.id,
-        title: item.name,
-        emissions: item.emissionLoad,
-        time: item.startTime,
-        iconImg: "/images/Group.png",
-      };
-    });
-
-    // echarts 的折线图数据
-    let xAxisData: string[] = [];
-    let park_carbonEquivalent: string[] = [];
-    let park_emissionLoadData: string[] = [];
-    tableInfo.data.forEach((element) => {
-      xAxisData.push(element.startTime);
-      park_carbonEquivalent.push(element.carbonEquivalent);
-      park_emissionLoadData.push(element.emissionLoad);
-    });
-
-    // 统一修改状态
-    setparkInfo(carbonInfo.data);
-    setTestMiniCardList([...statisticsInfoData]);
-    setPark_xAxisData([...xAxisData]);
-    setpark_carbonEquivalent([...park_carbonEquivalent]);
-    setpark_emissionLoadData([...park_emissionLoadData]);
+    setParkInfoShow(false);
+    try {
+      let res = await GET_PARK_CARBON_INFO_API(1);
+      setparkInfo(res.data);
+    } catch (err) {}
+    setParkInfoShow(true);
   };
+
+  const getparkEcharts = async () => {
+    setParkEchartsShow(false);
+    try {
+      let res = await GET_PARK_TABLE_INFO_API(1, 0);
+      let xAxisData: string[] = [];
+      let park_carbonEquivalent: string[] = [];
+      let park_emissionLoadData: string[] = [];
+      res.data.forEach((element) => {
+        xAxisData.push(element.startTime);
+        park_carbonEquivalent.push(element.carbonEquivalent);
+        park_emissionLoadData.push(element.emissionLoad);
+      });
+      setPark_xAxisData([...xAxisData]);
+      setpark_carbonEquivalent([...park_carbonEquivalent]);
+      setpark_emissionLoadData([...park_emissionLoadData]);
+    } catch {}
+    setParkEchartsShow(true);
+  };
+
+  const getActiveParkInfos = async () => {
+    setActiveParkInfoShow(false);
+    try {
+      let res = await GET_PARK_STATISTICS_API(1);
+      const statisticsInfoData = res.data.map((item) => {
+        return {
+          id: item.id,
+          title: item.name,
+          emissions: item.emissionLoad,
+          time: item.startTime,
+          iconImg: "/images/Group.png",
+        };
+      });
+      setTestMiniCardList([...statisticsInfoData]);
+    } catch {}
+    setActiveParkInfoShow(true);
+  };
+
   useEffect(() => {
     getParkInfo();
+    getparkEcharts();
+    getActiveParkInfos();
   }, []);
 
   return (
     <div className="parkFootprint">
       <div className="topCardBox">
         <div className="parkcard-box">
-          <ParkCard
-            parkName={parkInfo.name}
-            parkLoc={parkInfo.address}
-            parktype={parkInfo.type}
-            parknum={parkInfo.num}
-            area={parkInfo.area}
-          />
+          {parkInfoShow ? (
+            <ParkCard
+              parkName={parkInfo.name}
+              parkLoc={parkInfo.address}
+              parktype={parkInfo.type}
+              parknum={parkInfo.num}
+              area={parkInfo.area}
+            />
+          ) : (
+            <MySkeleton />
+          )}
         </div>
         <div className="TotalCount-box">
-          <TotalCount
-            total={parkInfo.emissionLoad}
-            addOrsub={false}
-            deviation={parkInfo.reduce}
-          />
+          {parkInfoShow ? (
+            <TotalCount
+              total={parkInfo.emissionLoad}
+              addOrsub={false}
+              deviation={parkInfo.reduce}
+            />
+          ) : (
+            <MySkeleton />
+          )}
         </div>
       </div>
       <div className="lineChartBox">
-        <LineChart
-          park_name={parkInfo.name}
-          toDay_data={0}
-          park_xAxisData={park_xAxisData}
-          park_carbonEquivalent={park_carbonEquivalent}
-          park_emissionLoad={park_emissionLoadData}
-        ></LineChart>
+        {parkEchartsShow ? (
+          <LineChart
+            park_name={parkInfo.name}
+            toDay_data={0}
+            park_xAxisData={park_xAxisData}
+            park_carbonEquivalent={park_carbonEquivalent}
+            park_emissionLoad={park_emissionLoadData}
+          ></LineChart>
+        ) : (
+          <MySkeleton rows={8} />
+        )}
       </div>
       <Mymap></Mymap>
       <div>
-        {testMiniCardList.map((item, i) => {
-          return (
-            <MiniCard
-              id={item.id}
-              linkFun={()=>toInfo(item.id)}
-              time={item.time}
-              title={item.title}
-              iconImg={item.iconImg}
-              emissions={item.emissions}
-              key={i.toString()}
-            ></MiniCard>
-          );
-        })}
+        {activeParkInfoShow ? (
+          <div>
+            {miniCardList.map((item, i) => {
+              return (
+                <MiniCard
+                  id={item.id}
+                  // linkFun={() => toInfo(item.id)}
+                  time={item.time}
+                  title={item.title}
+                  iconImg={item.iconImg}
+                  emissions={item.emissions}
+                  key={i.toString()}
+                ></MiniCard>
+              );
+            })}
+          </div>
+        ) : (
+          <MySkeleton rows={8} />
+        )}
       </div>
-      
     </div>
   );
 };

@@ -8,7 +8,9 @@ import MyContextWrapper from "@components/MyContext/MyContext";
 import MapScrtpi from '@components/MapScript/MapScript';
 
 
+
 function MyApp({ Component, pageProps }: AppProps) {
+ 
   return (
     <MyContextWrapper>
       <MapScrtpi></MapScrtpi>

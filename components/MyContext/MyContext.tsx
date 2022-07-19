@@ -9,9 +9,11 @@ const initialState = {
     img: "/images/Ellipse2.png",
   },
   parkFootprint: {
-    id: 0,
-    activityId: 0,
+    parkId: 0,
+    typeId: 0,
   },
+  parkId: 0,
+  typeId: 0,
 };
 
 // 编写我们的 reducer，写法和 redux 的完全相同
@@ -53,6 +55,10 @@ const MyContextWrapper = ({ children: children }: any) => {
       });
     }
   }, []);
+  useEffect(()=>{
+   
+    
+  },[])
   return (
     <MyContext.Provider value={{ state, dispatch }}>
       {children}

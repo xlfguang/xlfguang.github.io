@@ -55,8 +55,16 @@ export interface index_Info extends success_Response {
     }
   ];
 }
-
 export type indexInfoApi = () => Promise<index_Info>;
+
+/**园区列表API的返回值*/
+export interface allPark_Info extends success_Response {
+  data:[
+    {id:number,
+    name:string,}
+  ]
+}
+export type allparkApi = () => Promise<allPark_Info>;
 
 /**园区碳足迹的消息*/
 export interface park_Info extends success_Response {
@@ -72,7 +80,7 @@ export interface park_Info extends success_Response {
     reduce: string;
   };
 }
-export type parkInfoApi = (id: number) => Promise<park_Info>;
+export type parkInfoApi = (parkid: number) => Promise<park_Info>;
 /**园区碳足迹统计类别的消息*/
 export interface park_Statistics extends success_Response {
   data: Array<{
@@ -83,7 +91,7 @@ export interface park_Statistics extends success_Response {
     startTime: string;
   }>;
 }
-export type park_StatisticsApi = (id: number) => Promise<park_Statistics>;
+export type park_StatisticsApi = (parkid: number) => Promise<park_Statistics>;
 
 /**园区碳足迹的Echarts表格返回的信息*/
 export interface park_Table extends success_Response {
@@ -93,7 +101,10 @@ export interface park_Table extends success_Response {
     startTime: string;
   }>;
 }
-export type park_TableApi = (id: number, type: number) => Promise<park_Table>;
+export type park_TableApi = (
+  parkid: number,
+  timeType: 0 | 1 | 2
+) => Promise<park_Table>;
 
 /**园区碳足迹 ———— 二级页面 ———— 默认页面返回数据类型*/
 export interface park_Activity extends success_Response {
@@ -102,8 +113,8 @@ export interface park_Activity extends success_Response {
   };
 }
 export type park_ActivityApi = (
-  id: number,
-  activityId: string
+  parkid: number,
+  typeId: string
 ) => Promise<park_Activity>;
 
 /**园区碳足迹——二级页面——详细eCharts折线图数据*/

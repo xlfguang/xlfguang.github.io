@@ -38,8 +38,6 @@ const Index: NextPage = ({ children }: any) => {
       <div className="index-left">
         <div className="top-left-box">
           <div className="text-box">
-            <div className="top-left-img" />
-
             <div className="title-box">
               <div className="line"></div>
               <span className="title">园区碳总览</span>
