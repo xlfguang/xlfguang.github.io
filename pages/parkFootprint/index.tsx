@@ -4,6 +4,7 @@ import ParkCard from "@components/ParkCard/ParkCard";
 import TotalCount from "@components/TotalCount/TotalCount";
 import Mymap from "@components/Mymap/Mymap";
 import MySkeleton from "@components/MySkeleton";
+import ExportPdf from "@components/exportPdf";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import {
@@ -11,14 +12,20 @@ import {
   GET_PARK_STATISTICS_API,
   GET_PARK_TABLE_INFO_API,
 } from "@request/apis";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { park_Info } from "types/types";
+import { MyContext } from "@components/MyContext/MyContext";
+import exportPDF from "@public/exportPDF";
+import { Checkbox, DatePicker, Modal, Space } from "antd";
 
 const ParkFootprint: NextPage = () => {
   const router = useRouter();
+  const { state, dispatch } = useContext(MyContext) as any;
+  const { parkId } = state;
   const [parkInfoShow, setParkInfoShow] = useState(true);
   const [parkEchartsShow, setParkEchartsShow] = useState(true);
   const [activeParkInfoShow, setActiveParkInfoShow] = useState(true);
+
   const [parkInfo, setparkInfo] = useState<park_Info["data"]>({
     id: 0,
     name: "暂无信息",
@@ -46,24 +53,31 @@ const ParkFootprint: NextPage = () => {
   const [park_emissionLoadData, setpark_emissionLoadData] = useState<
     string[] | number[]
   >([]);
+  const [typeOptions, setTypeOptions] = useState<
+    { label: string; value: string | number }[]
+  >([]);
 
   const toParkFootprintInfo = (id: string | number) => {
     router.push(`/parkFootprint/info`);
+    dispatch({
+      type: "UPDATE_TYPE_ID",
+      payload: id,
+    });
   };
 
-  const getParkInfo = async () => {
+  const getParkInfo = async (parkId: number) => {
     setParkInfoShow(false);
     try {
-      let res = await GET_PARK_CARBON_INFO_API(1);
+      let res = await GET_PARK_CARBON_INFO_API(parkId);
       setparkInfo(res.data);
     } catch (err) {}
     setParkInfoShow(true);
   };
 
-  const getparkEcharts = async () => {
+  const getparkEcharts = async (parkId: number) => {
     setParkEchartsShow(false);
     try {
-      let res = await GET_PARK_TABLE_INFO_API(1, 0);
+      let res = await GET_PARK_TABLE_INFO_API(parkId, 0);
       let xAxisData: string[] = [];
       let park_carbonEquivalent: string[] = [];
       let park_emissionLoadData: string[] = [];
@@ -79,10 +93,10 @@ const ParkFootprint: NextPage = () => {
     setParkEchartsShow(true);
   };
 
-  const getActiveParkInfos = async () => {
+  const getActiveParkInfos = async (parkId: number) => {
     setActiveParkInfoShow(false);
     try {
-      let res = await GET_PARK_STATISTICS_API(1);
+      let res = await GET_PARK_STATISTICS_API(parkId);
       const statisticsInfoData = res.data.map((item) => {
         return {
           id: item.id,
@@ -98,10 +112,12 @@ const ParkFootprint: NextPage = () => {
   };
 
   useEffect(() => {
-    getParkInfo();
-    getparkEcharts();
-    getActiveParkInfos();
-  }, []);
+    if (parkId) {
+      getParkInfo(parkId);
+      getparkEcharts(parkId);
+      getActiveParkInfos(parkId);
+    }
+  }, [parkId]);
 
   return (
     <div className="parkFootprint">
@@ -152,7 +168,7 @@ const ParkFootprint: NextPage = () => {
               return (
                 <MiniCard
                   id={item.id}
-                  // linkFun={() => toInfo(item.id)}
+                  linkFun={() => toParkFootprintInfo(item.id)}
                   time={item.time}
                   title={item.title}
                   iconImg={item.iconImg}
@@ -166,6 +182,14 @@ const ParkFootprint: NextPage = () => {
           <MySkeleton rows={8} />
         )}
       </div>
+      <ExportPdf
+        typeOptions={miniCardList.map((item, i) => {
+          return {
+            label: item.title,
+            value: item.id,
+          };
+        })}
+      ></ExportPdf>
     </div>
   );
 };

@@ -8,10 +8,6 @@ const initialState = {
     name: "尚未登录",
     img: "/images/Ellipse2.png",
   },
-  parkFootprint: {
-    parkId: 0,
-    typeId: 0,
-  },
   parkId: 0,
   typeId: 0,
 };
@@ -30,11 +26,16 @@ function reducer(state = initialState, action: any) {
         ...state,
         user: payload,
       };
-    case "UPDATE_PARK_FOOTPRINT":
+    case "UPDATE_PARK_ID":
       return {
         ...state,
-        parkFootprint: payload,
+        parkId: payload,
       };
+    case "UPDATE_TYPE_ID":
+      return {
+        ...state,
+        typeId: payload,
+      }
     default:
       return state;
   }
@@ -53,6 +54,13 @@ const MyContextWrapper = ({ children: children }: any) => {
         type: "UPDATE_LOGIN_STATUS",
         payload: login_Status.login,
       });
+      dispatch({
+        type: "UPDATE_USER",
+        payload: {
+          name: "欢迎",
+          img: "/images/Ellipse2.png",
+        }
+      })
     }
   }, []);
   useEffect(()=>{

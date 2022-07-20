@@ -4,7 +4,7 @@ import InfoCard, { InfoCardData } from "@components/InfoCard/InfoCard";
 import LineChart from "@components/LineChart/LineChart";
 import MiniCard, { MiniCardProps } from "@components/MiniCard/MiniCard";
 import TableModal from "@components/TableModal/TableModal";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import CheckDetailsBTN from "@components/CheckDetailsBTN/CheckDetailsBTN";
 import { ColumnsType } from "antd/lib/table";
 import { detailsTable } from "types/types";
@@ -15,7 +15,7 @@ import {
   GET_PARK_ACTIVITY_ECHARTS_DATA_API,
   GET_PARK_ACTIVITY_DAY_BASE_DETAIL_API,
 } from "@request/apis";
-
+import { MyContext } from "@components/MyContext/MyContext";
 
 const columns: ColumnsType<detailsTable> = [
   {
@@ -86,6 +86,8 @@ const columns: ColumnsType<detailsTable> = [
 
 const ParkFootprintInfo: NextPage = () => {
   const router = useRouter();
+  const { state, dispatch } = useContext(MyContext) as any;
+  const { parkId, typeId } = state;
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [modalShow, setmodalShow] = useState(false);
@@ -108,8 +110,8 @@ const ParkFootprintInfo: NextPage = () => {
 
   const getParkInfo = async () => {
     const getAllInfo = (
-      id: number = 1,
-      activityId: string = "2",
+      id: number = parkId,
+      activityId: string = typeId,
       type: number = 0
     ) => {
       return Promise.all([
@@ -151,6 +153,8 @@ const ParkFootprintInfo: NextPage = () => {
   };
 
   useEffect(() => {
+    console.log(state.typeId);
+
     getParkInfo();
   }, []);
 
@@ -162,7 +166,7 @@ const ParkFootprintInfo: NextPage = () => {
       pageIndex,
       pageSize
     );
-    let tableData:detailsTable[] = res.data.data.map((item, i) => {
+    let tableData: detailsTable[] = res.data.data.map((item, i) => {
       return {
         key: i.toString(),
         deviceID: {

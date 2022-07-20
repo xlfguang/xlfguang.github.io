@@ -9,22 +9,23 @@ import { login_Status } from "types/types";
 import Link from "next/link";
 import { removeLoc } from "@public/index";
 import { GET_ALL_PARK_LIST_API } from "@request/apis";
+import { ItemType } from "antd/lib/menu/hooks/useItems";
 
 const items: MenuProps["items"] = [
   {
     label: "园区碳总览",
     icon: <img src="/images/Vector-1.png"></img>,
-    key: "",
+    key: "/",
   },
   {
     label: "园区碳足迹",
     icon: <img src="/images/Vector-2.png"></img>,
-    key: "parkFootprint",
+    key: "/parkFootprint",
   },
   {
     label: "企业碳足迹",
     icon: <img src="/images/Vector-3.png"></img>,
-    key: "enterpriseFootprint",
+    key: "/enterpriseFootprint",
   },
   // {
   //   label: "碳活动配置",
@@ -32,12 +33,28 @@ const items: MenuProps["items"] = [
   //   key: "configuration",
   // },
 ];
+
 const Header: NextPage = (req, res) => {
   const [current, setCurrent] = useState("parkOverview");
   const [isModalVisible, setisModalVisible] = useState(false);
   const router = useRouter();
   const { state, dispatch } = useContext(MyContext) as any;
   const { loginStatus, user } = state;
+  let [parkList, setParkList] = useState<ItemType[]>([
+    {
+      key: "0",
+      label:
+        loginStatus === login_Status.login ? (
+          <span onClick={() => setisModalVisible(true)}>退出登录</span>
+        ) : (
+          <span>
+            <Link href={"/login"}>前往登录</Link>
+          </span>
+        ),
+    },
+  ]);
+  const menu = <Menu items={parkList} />;
+
   const loginOut = () => {
     dispatch({
       type: "UPDATE_LOGIN_STATUS",
@@ -46,36 +63,50 @@ const Header: NextPage = (req, res) => {
     removeLoc("token");
     router.push("/login");
   };
-  const menu = (
-    <Menu
-      items={[
-        {
-          key: "1",
-          label:
-            loginStatus === login_Status.login ? (
-              <span onClick={() => setisModalVisible(true)}>退出登录</span>
-            ) : (
-              <span>
-                <Link href={"/login"}>前往登录</Link>
-              </span>
-            ),
-        },
-      ]}
-    />
-  );
   useEffect(() => {
     if (loginStatus === login_Status.login) {
       getAllParkList();
     }
   }, [loginStatus]);
 
+  useEffect(() => {
+    setCurrent(router.pathname);
+  });
+  const setpark = (id: number, name: string) => {
+    dispatch({
+      type: "UPDATE_PARK_ID",
+      payload: id,
+    });
+    dispatch({
+      type: "UPDATE_USER",
+      payload: {
+        name: name,
+        img: "/images/Ellipse2.png",
+      },
+    });
+  };
+
+  const setParkId = (parkId: number, name: string) => {
+    setpark(parkId, name);
+    router.push(`/parkFootprint`);
+  };
+
   const getAllParkList = async () => {
     let res = await GET_ALL_PARK_LIST_API();
-    console.log(res);
+    let parkList = res.data.map((item) => {
+      return {
+        key: item.id,
+        label: (
+          <span onClick={() => setParkId(item.id, item.name)}>{item.name}</span>
+        ),
+      };
+    });
+    setpark(res.data[0].id, res.data[0].name);
+    setParkList([...parkList]);
   };
 
   const onClick: MenuProps["onClick"] = (e) => {
-    router.push(`/${e.key}`);
+    router.push(`${e.key}`);
     setCurrent(e.key);
   };
   return (
