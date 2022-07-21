@@ -8,7 +8,7 @@ interface xlsxData {
   parkStatistics: park_Statistics["data"];
 }
 
-const exportXLSX = (data: xlsxData, name: string, domName: string) => {
+const exportXLSX = ( name: string, domName: string) => {
   const element = document.getElementById(domName) as HTMLElement; // 这个dom元素是要导出的pdf的div容器
   const w = element.offsetWidth; // 获得该容器的宽
   const h = element.offsetHeight; // 获得该容器的高

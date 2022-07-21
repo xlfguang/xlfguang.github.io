@@ -20,17 +20,9 @@ const Layout = ({ children, router }: { children: any; router: any }) => {
     Router.push("/");
   }
   useEffect(() => {
-    console.log(router.pathname);
     router.pathname == "/login" ? setheaderShow(false) : setheaderShow(true);
-    if (
-      loginStatus !== login_Status.login &&
-      router.pathname != "/login" &&
-      router.pathname != "/"
-    ) {
-      setIsModalVisible(true);
-      // router.push("/login");
-    }
   }, [router.pathname]);
+ 
   return (
     <div className={style.box}>
       {headerShow ? <Header /> : <></>}

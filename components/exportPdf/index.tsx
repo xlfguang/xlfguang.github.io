@@ -1,44 +1,74 @@
 import exportPDF from "@public/exportPDF";
 import { Modal, Checkbox, Space, DatePicker } from "antd";
 import { useState } from "react";
+import styles from "./index.module.sass";
+let prakInfo = {
+  id: 0,
+  name: "成都园区",
+  area: "58000",
+  num: 0,
+  address: "成都市高新区",
+  emissionLoad: "",
+  region: "",
+  type: "工业园区",
+  reduce: "",
+};
+let parkStatistics = [
+  {
+    id: 0,
+    name: "工业用电",
+    emissionLoad: "1548.154",
+    carbonEquivalent: "2266",
+    startTime: "2022/7/11",
+  },
+  {
+    id: 1,
+    name: "交通用电",
+    emissionLoad: "1548.154",
+    carbonEquivalent: "2266",
+    startTime: "2022/7/11",
+  },
+];
+let detailsList = [
+  {
+    name: "工业用能排放",
+    list: [
+      {
+        detailsName: "国网电",
+        num: "1189232",
+        emissionLoad: "0.581",
+        carbonEquivalent: "690943.792",
+      },
+      {
+        detailsName: "水电",
+        num: "1189232",
+        emissionLoad: "0.581",
+        carbonEquivalent: "690943.792",
+      },
+      {
+        detailsName: "风电",
+        num: "1189232",
+        emissionLoad: "0.581",
+        carbonEquivalent: "690943.792",
+      },
+      {
+        detailsName: "火电",
+        num: "1189232",
+        emissionLoad: "0.581",
+        carbonEquivalent: "690943.792",
+      },
+    ],
+  },
+];
 
 const ExportPdf = ({ typeOptions }: { typeOptions: any }) => {
   const { RangePicker } = DatePicker;
   const [checkBoxShow, setcheckBoxShow] = useState(false);
   const [pdfShow, setPdfShow] = useState(false);
   const exportpdf = () => {
-    let data = {
-      prakInfo: {
-        id: 0,
-        name: "成都园区",
-        area: "58000",
-        num: 0,
-        address: "成都市高新区",
-        emissionLoad: "",
-        region: "",
-        type: "工业园区",
-        reduce: "",
-      },
-      parkStatistics: [
-        {
-          id: 0,
-          name: "工业用电",
-          emissionLoad: "1548.154",
-          carbonEquivalent: "2266",
-          startTime: "2022/7/11",
-        },
-        {
-          id: 1,
-          name: "交通用电",
-          emissionLoad: "1548.154",
-          carbonEquivalent: "2266",
-          startTime: "2022/7/11",
-        },
-      ],
-    };
     let name = "";
-    let domName = "demo";
-    exportPDF(data, name, domName);
+    let domName = "pdfDOM";
+    exportPDF(name, domName);
   };
   const selectReport = () => {
     setcheckBoxShow(true);
@@ -64,7 +94,7 @@ const ExportPdf = ({ typeOptions }: { typeOptions: any }) => {
         cancelText="取消"
         okText="确定"
       >
-        <div style={{margin:'0 0 40px 0'}}>
+        <div style={{ margin: "0 0 40px 0" }}>
           <Checkbox.Group options={typeOptions} defaultValue={[]} />
         </div>
         <Space direction="vertical" size={12}>
@@ -80,8 +110,60 @@ const ExportPdf = ({ typeOptions }: { typeOptions: any }) => {
         bodyStyle={{ height: "50vh", overflowY: "scroll" }}
         onOk={() => exportpdf()}
         onCancel={() => setPdfShow(false)}
+        okText="导出"
+        cancelText="取消"
       >
-        <div id="demo">132</div>
+        <div id="pdfDOM">
+          <div className={styles.pdfBox}>
+            <div className={styles.title}>基本信息</div>
+            <div className={styles.infoBox}>
+              <span>园区/企业名称 </span>
+              <span>{prakInfo.name}</span>
+            </div>
+            <div className={styles.infoBox}>
+              <span>类型</span>
+              <span>{prakInfo.type}</span>
+            </div>
+            <div className={styles.infoBox}>
+              <span>年份</span>
+              <span>{prakInfo.emissionLoad}</span>
+            </div>
+            <div className={styles.infoBox}>
+              <span>地址</span>
+              <span>{prakInfo.address}</span>
+            </div>
+            <div className={styles.title}>排放信息</div>
+            {parkStatistics.map((item, index: number) => {
+              return (
+                <div className={styles.infoBox} key={index}>
+                  <span>{item.name}</span>
+                  <span>{item.emissionLoad}</span>
+                </div>
+              );
+            })}
+            <div className={styles.title}>明细</div>
+            <div className={styles.details}>
+              <span></span>
+              <span className={styles.name}>能源名称</span>
+              <span>消费量（KWH）</span>
+              <span>CO2排放因子 （kgCO2/KWH）</span>
+              <span>CO2排放量（kg）</span>
+            </div>
+            {/* <div className={styles.details}>
+              {detailsList.map((item, index) => {
+                return (
+                  <div key={index}>
+                    <span>{item.name}</span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                );
+              })}
+            </div> */}
+          </div>
+        </div>
       </Modal>
     </div>
   );

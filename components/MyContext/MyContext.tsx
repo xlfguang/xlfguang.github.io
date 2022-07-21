@@ -1,7 +1,7 @@
 import { getLoc } from "@public/index";
+import router from "next/router";
 import React, { createContext, useEffect, useReducer } from "react";
 import { login_Status } from "../../types/types";
-
 const initialState = {
   loginStatus: login_Status.notLogin,
   user: {
@@ -35,7 +35,7 @@ function reducer(state = initialState, action: any) {
       return {
         ...state,
         typeId: payload,
-      }
+      };
     default:
       return state;
   }
@@ -47,6 +47,7 @@ export const MyContext = createContext({});
 // 将 wrapper 暴露出去
 const MyContextWrapper = ({ children: children }: any) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const {loginStatus} = state;
   useEffect(() => {
     const token = getLoc("token");
     if (token) {
@@ -59,14 +60,13 @@ const MyContextWrapper = ({ children: children }: any) => {
         payload: {
           name: "欢迎",
           img: "/images/Ellipse2.png",
-        }
-      })
+        },
+      });
     }
+    console.log('XXX');
   }, []);
-  useEffect(()=>{
-   
-    
-  },[])
+  
+
   return (
     <MyContext.Provider value={{ state, dispatch }}>
       {children}
